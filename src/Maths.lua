@@ -37,3 +37,26 @@ local function isPrime(number: number): boolean
 
 	return true
 end
+
+-- List all prime factors of a number, in ascending order
+local function primeFactors(number: number): {number}
+	local primeFactors: {number} = {}
+	
+	while number % 2 == 0 do
+		table.insert(primeFactors, 2)
+		number /= 2
+	end
+	
+	for factor: number = 3, math.sqrt(number) + 1, 2 do
+		while number % factor == 0 do
+			table.insert(primeFactors, factor)
+			number /= factor
+		end
+	end
+	
+	if number > 2 then
+		table.insert(primeFactors, number)
+	end
+	
+	return primeFactors
+end
