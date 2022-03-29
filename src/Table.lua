@@ -1,6 +1,6 @@
 local function prettyConcatenate(array: {[number]: any}): string
-  if #list == 1 then
-    return tostring(list[1])
+	if #list == 1 then
+		return tostring(list[1])
 	elseif #list == 2 then
 		return list[1] .. " and " .. list[2]
 	else
