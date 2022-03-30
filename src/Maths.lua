@@ -60,3 +60,34 @@ local function primeFactors(number: number): {number}
 	
 	return primeFactors
 end
+
+-- Generate a copy of the fibonacci sequence of length n
+local function fibonacciSequence(length: number): {number}
+	local fibonacci: {number} = {0, 1}
+	
+	for index: number = 3, length do
+		table.insert(fibonacci, fibonacci[index - 2] + fibonacci[index - 1])
+	end
+	
+	return fibonacci
+end
+
+-- Find the square root of the product of all the inputs
+local function geometricMean(...): number
+	local total: number = 0
+	local args: {number} = type(...) == "table" and ... or {...}
+	for index: number, value: number in ipairs(args) do
+		total *= value
+	end
+	return math.sqrt(total)
+end
+
+-- Find the square root of the mean of the squared inputs (aka root mean square)
+local function quadraticMean(...): number
+	local args: {number} = type(...) == "table" and ... or {...}
+	local total: number = 0
+	for index: number, value: number in ipairs(args) do
+		total += value^2
+	end
+	return math.sqrt(total / #args)
+end
