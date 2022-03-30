@@ -91,3 +91,43 @@ local function quadraticMean(...): number
 	end
 	return math.sqrt(total / #args)
 end
+
+-- Find the mean of a data set (average)
+local function mean(...): number
+	local total: number = 0
+	local args: {number} = if type(...) == "table" then ... else {...}
+	for index: number, value: number in ipairs(args) do
+		total += value
+	end
+	return total / #args
+end
+			
+-- Find the median of a data set (middle value)
+local function median(...): number
+	local args: {number} = if type(...) == "table" then ... else {...}
+	table.sort(args)
+	return if #args % 2 == 0 then (args[#args / 2] + args[#args / 2 + 1]) / 2 else args[math.ceil(#args / 2)]
+end
+
+-- Find the mode(s) of a data set (most common value)
+local function mode(...): (number | {number}, number)
+	local args: {number} = if type(...) == "table" then ... else {...}
+	local modePass1: {number} = {}
+	local modePass2: {number} = {}
+	local occurrences: number = 0
+
+	for index: number, value: number in ipairs(args) do
+		modePass1[value] = if modePass1[value] then modePass1[value] + 1 else 1
+	end
+
+	for index: number, value: number in ipairs(modePass1) do
+		if value > occurrences then
+			occurrences = value
+			modePass2 = {index}
+		elseif value == occurrences then
+			table.insert(modePass2, index)
+		end
+	end
+
+	return if #modePass2 == 1 then modePass2[1] else modePass2, occurrences
+end
