@@ -75,7 +75,7 @@ end
 -- Find the square root of the product of all the inputs
 local function geometricMean(...): number
 	local total: number = 0
-	local args: {number} = type(...) == "table" and ... or {...}
+	local args: {number} = if type(...) == "table" then ... else {...}
 	for index: number, value: number in ipairs(args) do
 		total *= value
 	end
@@ -84,7 +84,7 @@ end
 
 -- Find the square root of the mean of the squared inputs (aka root mean square)
 local function quadraticMean(...): number
-	local args: {number} = type(...) == "table" and ... or {...}
+	local args: {number} = if type(...) == "table" then ... else {...}
 	local total: number = 0
 	for index: number, value: number in ipairs(args) do
 		total += value^2
