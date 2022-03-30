@@ -1,7 +1,7 @@
 --!strict
 -- Author(s): bobbybob2131 
 -- Last edited: 30 March 2022
--- Description: 6 variables and 21 functions for mathematics
+-- Description: 6 variables and 23 functions for mathematics
 
 --[[
 Constants are rationalised to be accurate to 12 decimal places (if applicable).
@@ -34,6 +34,8 @@ function mathsModule.upperQuartile(...): number Find the third quartile (middle 
 function mathsModule.interquartileRange(...): number Find the interquartile range (difference between first and third quartiles)
 function mathsModule.standardDeviation(...): number Find the standard deviation (spread from mean average)
 function mathsModule.getPercentageChange(old: number, new: number): number Calculate difference as a percentage
+function mathsModule.angleBetween(vectorA: Vector3, vectorB: Vector3): number Find the angle between two vectors
+function mathsModule.lerp(number1: number, number2: number, alpha: number?) Linearly interpolate between two values, alpha defaults to 0.5
 ]]
 
 local mathsModule = {}
@@ -72,8 +74,12 @@ function mathsModule.root(number: number, root: number): number
 end
 
 -- Round a number to a given precision
-function mathsModule.round(number: number, precision: number): number
-	return math.round(number * 10^precision) * 10^-precision
+function mathsModule.round(number: number, precision: number, precisionIsDecimals: boolean?): number
+	if precisionIsDecimals then
+		return math.round(number * 10^precision) * 10^-precision
+	else 
+		return math.round(number * precision) / precision
+	end
 end
 
 -- Check if a number is an integer (whole number)
@@ -300,6 +306,17 @@ function mathsModule.getPercentageChange(old: number, new: number): number
 	else
 		return (new - old) / math.abs(old)
 	end
+end
+
+-- Find the angle between two vectors
+function mathsModule.angleBetween(vectorA: Vector3, vectorB: Vector3): number
+	return math.atan2(vectorA:Cross(vectorB).Magnitude, vectorA:Dot(vectorB))
+end
+
+-- Linearly interpolate between two values, alpha defaults to 0.5
+function mathsModule.lerp(number1: number, number2: number, alpha: number?)
+	alpha = alpha or 0.5
+	return number1 + ((number2 - number1) * alpha :: number)
 end
 
 return mathsModule
