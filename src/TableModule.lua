@@ -1,7 +1,7 @@
 --!strict
 -- Author(s): bobbybob2131 
 -- Last edited: 3 April 2022
--- Description: 2 types and 11 functions for the manipulation of tables
+-- Description: 2 types and 14 functions for the manipulation of tables
 
 --[[
 type proxyWithMeta userdata with metatable type
@@ -20,6 +20,20 @@ function tableModule.length(target: {[any]: any}): number Get the length of a ta
 function tableModule.isEmpty(target: {[any]: any}): boolean Check if a table is empty
 function tableModule.concatenateDictionary(dictionary: {[any]: any}, separator: string?, keyValueSeparator: string?, startPos: number, endPos: number): string
 	Same as table.concat, but works on dictionaries
+function tableModule.copy(target: {[any]: any}, deep: boolean?): {[any]: any}
+	Copy a table, with the option to do the same for all child tables
+function tableModule.swapRemove(array: {any}, index: number?) Quickly remove a value from an array, but without preserving order
+function tableModule.equals(target1: {[any]: any}, target2: {[any]: any}): boolean Check if two tables are equal
+]]
+
+--[[
+local testTable = {
+	{"a", 1, 2},
+	{["hi"] = 1, 3, {"c", "d", {["testing"] = true}}},
+	2,
+	"hello",
+	Vector3.new()
+}
 ]]
 
 local tableModule = {}
@@ -180,6 +194,36 @@ function tableModule.concatenateDictionary(dictionary: {[any]: any}, separator: 
 	end
 	
 	return concatenatedDict
+end
+
+-- Copy a table, with the option to do the same for all child tables
+function tableModule.copy(target: {[any]: any}, deep: boolean?): {[any]: any}
+	if #target > 0 then -- Array
+		return table.move(target, 1, #target, 1, table.create(#target))
+	else
+		local copiedTable: {[any]: any} = {}
+		for key: any, value: any in pairs(target) do
+			copiedTable[key] = value
+		end
+		return copiedTable
+	end
+end
+
+-- Quickly remove a value from an array, but without preserving order
+function tableModule.swapRemove(array: {any}, index: number?)
+	local length: number = #array
+	array[index or 1] = array[length] 
+	array[length] = nil
+end
+
+-- Check if two tables are equal
+function tableModule.equals(target1: {[any]: any}, target2: {[any]: any}): boolean
+	for key: any, value: any in pairs(target1) do
+		if target2[key] ~= value then
+			return false
+		end
+	end
+	return true
 end
 
 return tableModule
