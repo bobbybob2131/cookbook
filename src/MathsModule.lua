@@ -1,7 +1,7 @@
 --!strict
 -- Author(s): bobbybob2131 
--- Last edited: 30 March 2022
--- Description: 6 variables and 23 functions for mathematics
+-- Last edited: 3 April 2022
+-- Description: 6 variables and 27 functions for mathematics
 
 --[[
 Constants are rationalised to be accurate to 12 decimal places (if applicable).
@@ -36,6 +36,10 @@ function mathsModule.standardDeviation(...): number Find the standard deviation 
 function mathsModule.getPercentageChange(old: number, new: number): number Calculate difference as a percentage
 function mathsModule.angleBetween(vectorA: Vector3, vectorB: Vector3): number Find the angle between two vectors
 function mathsModule.lerp(number1: number, number2: number, alpha: number?) Linearly interpolate between two values, alpha defaults to 0.5
+function mathsModule.isFinite(number: number): boolean Check if a number is not infinite
+function mathsModule.isNaN(number: number): boolean Check if a number is NaN (not a number)
+function mathsModule.isReal(number: number): boolean Check if a number is not imaginary (i)
+function mathsModule.isNatural(number: number, includeZero: boolean?): boolean Check if a number is a natural number
 ]]
 
 local mathsModule = {}
@@ -317,6 +321,30 @@ end
 function mathsModule.lerp(number1: number, number2: number, alpha: number?)
 	alpha = alpha or 0.5
 	return number1 + ((number2 - number1) * alpha :: number)
+end
+
+-- Check if a number is not infinite
+function mathsModule.isFinite(number: number): boolean
+	return number > -math.huge and number < math.huge
+end
+
+-- Check if a number is NaN (not a number)
+function mathsModule.isNaN(number: number): boolean
+	return number ~= number
+end
+
+-- Check if a number is not imaginary (i)
+function mathsModule.isReal(number: number): boolean
+	return number ~= number and (number > -math.huge and number < math.huge)
+end
+
+-- Check if a number is a natural number 
+function mathsModule.isNatural(number: number, includeZero: boolean?): boolean
+	if includeZero then
+		return math.round(number) == number and not math.sign(number) == -1
+	else
+		return math.round(number) == number and math.sign(number) == 1
+	end
 end
 
 return mathsModule
