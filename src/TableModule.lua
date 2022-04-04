@@ -1,13 +1,12 @@
 --!strict
 -- Author(s): bobbybob2131 
--- Last edited: 30 March 2022
--- Description: 2 types and 8 functions for the manipulation of tables
+-- Last edited: 3 April 2022
+-- Description: 2 types and 11 functions for the manipulation of tables
 
 --[[
 type proxyWithMeta userdata with metatable type
 type proxy userdata type
-
-function tableModule.concatenateNonStrings(array: {[number]: any}, separator: string?, startPos: number?, endPos: number?): string 
+function tableModule.concatenateNonStrings(array: {[number]: any}, separator: string?, startPos: number?, endPos: number?, separateEnding: boolean?): string
 	Concatenate an array with non-string values (e.g. booleans), using the same defaults/functionality as the builtin
 function tableModule.prettyConcatenate(array: {[number]: any}): string Concatenate an array with commas and the ending "x and y"
 function tableModule.normaliseTuple(...: any) Make sure a tuple (...) is a table, for iteration over
@@ -17,6 +16,10 @@ function tableModule.reverse(array: {[number]: any}) Reverse the values in an ar
 function tableModule.shuffle(array: {[number]: any}) Randomly shuffle the order of values in an array
 function tableModule.toProxy(oldTable: any, copyMetatable: boolean?): (proxyWithMeta | proxy, {[string]: any}?)
 	Convert a table (and metatable) to a proxy, `oldTable` is an array/dictionary, potentially with a metatable
+function tableModule.length(target: {[any]: any}): number Get the length of a table (works on dictionaries)
+function tableModule.isEmpty(target: {[any]: any}): boolean Check if a table is empty
+function tableModule.concatenateDictionary(dictionary: {[any]: any}, separator: string?, keyValueSeparator: string?, startPos: number, endPos: number): string
+	Same as table.concat, but works on dictionaries
 ]]
 
 local tableModule = {}
@@ -27,19 +30,25 @@ local blankProxy = newproxy()
 export type proxyWithMeta = typeof(metaProxy) -- Not sure if these are the same or not
 export type proxy = typeof(blankProxy)
 
-
 -- Concatenate an array with non-string values (e.g. booleans), using the same defaults/functionality as the builtin
-function tableModule.concatenateNonStrings(array: {[number]: any}, separator: string?, startPos: number?, endPos: number?): string
+function tableModule.concatenateNonStrings(array: {[number]: any}, separator: string?, startPos: number?, endPos: number?, separateEnding: boolean?): string
 	separator = separator or ""
 	startPos = startPos or 1
 	endPos = endPos or #array
 	local concatenatedTable: string = ""
 	
-	for index: number = startPos :: number, endPos :: number - 1 do
-		concatenatedTable ..= array[index] .. separator
+	if separateEnding then
+		for index: number = startPos :: number, endPos :: number - 1 do
+			concatenatedTable ..= tostring(array[index]) .. separator :: string
+		end
+
+		return concatenatedTable .. tostring(array[endPos :: number]) -- Otherwise it would end with the separator
+	else
+		for index: number = startPos :: number, endPos :: number do
+			concatenatedTable ..= tostring(array[index]) .. separator :: string
+		end
+		return concatenatedTable
 	end
-	
-	return concatenatedTable .. array[endPos :: number] -- Otherwise it would end with the separator
 end
 
 -- Concatenate an array with commas and the ending "x and y"
@@ -133,6 +142,44 @@ function tableModule.toProxy(oldTable: any, copyMetatable: boolean?): (proxyWith
 		end
 		return proxy
 	end
+end
+
+-- Get the length of a table (works on dictionaries)
+function tableModule.length(target: {[any]: any}): number
+	local length: number = 0
+	for _ in pairs(target) do
+		length += 1
+	end
+	return length
+end
+
+-- Check if a table is empty
+function tableModule.isEmpty(target: {[any]: any}): boolean
+	if next(target) == nil then
+		return true
+	else
+		return false
+	end
+end
+
+-- Same as table.concat, but works on dictionaries
+function tableModule.concatenateDictionary(dictionary: {[any]: any}, separator: string?, keyValueSeparator: string?, startPos: number, endPos: number): string
+	local length: number = 0
+	for _ in pairs(dictionary) do
+		length += 1
+	end
+	separator = separator or ""
+	keyValueSeparator = keyValueSeparator or "="
+	startPos = startPos or 1
+	endPos = endPos or length
+	
+	local concatenatedDict: string = ""
+	
+	for key: string, value: string in pairs(dictionary) do
+		concatenatedDict ..= tostring(key) .. keyValueSeparator :: string .. tostring(value) .. separator :: string
+	end
+	
+	return concatenatedDict
 end
 
 return tableModule
