@@ -4,8 +4,8 @@
 -- Description: 2 types and 14 functions for the manipulation of tables
 
 --[[
-type proxyWithMeta userdata with metatable type
-type proxy userdata type
+type proxy userdata
+type metatable Table with a metatable
 
 function tableModule.concatenateNonStrings(array: {[number]: any}, separator: string?, startPos: number?, endPos: number?, separateEnding: boolean?): string
 	Concatenate an array with non-string values (e.g. booleans), using the same defaults/functionality as the builtin
@@ -24,7 +24,8 @@ function tableModule.concatenateDictionary(dictionary: {[any]: any}, separator: 
 function tableModule.copy(target: {[any]: any}, deep: boolean?): {[any]: any}
 	Copy a table, with the option to do the same for all child tables
 function tableModule.swapRemove(array: {any}, index: number?) Quickly remove a value from an array, but without preserving order
-function tableModule.equals(target1: {[any]: any}, target2: {[any]: any}): boolean Check if two tables are equal
+function tableModule.equals(target1: {[any]: any}, target2: {[any]: any}, checkBoth: boolean?): boolean 
+	Check if two tables are equal, `checkBoth` toggles looping through both tables, it checks if target1 has the same values as target2, and target2 the same as target1	
 ]]
 
 --[[
@@ -39,11 +40,10 @@ local testTable = {
 
 local tableModule = {}
 
-local metaProxy = newproxy(true)
 local blankProxy = newproxy()
 
-export type proxyWithMeta = typeof(metaProxy) -- Not sure if these are the same or not
 export type proxy = typeof(blankProxy)
+export type metatable = typeof(getmetatable(setmetatable({}, {})))
 
 -- Concatenate an array with non-string values (e.g. booleans), using the same defaults/functionality as the builtin
 function tableModule.concatenateNonStrings(array: {[number]: any}, separator: string?, startPos: number?, endPos: number?, separateEnding: boolean?): string
@@ -137,9 +137,9 @@ function tableModule.shuffle(array: {[number]: any})
 end
 
 -- Convert a table (and metatable) to a proxy, `oldTable` is an array/dictionary, potentially with a metatable
-function tableModule.toProxy(oldTable: any, copyMetatable: boolean?): (proxyWithMeta | proxy, {[string]: any}?)
+function tableModule.toProxy(oldTable: any, copyMetatable: boolean?): (proxy, {[string]: any}?)
 	if copyMetatable then
-		local proxy: proxyWithMeta = newproxy(true)
+		local proxy: proxy = newproxy(true)
 		local proxyMeta: {[string]: any} = getmetatable(proxy)
 		local tableMeta: {[string]: any} = getmetatable(oldTable)
 		
@@ -218,10 +218,17 @@ function tableModule.swapRemove(array: {any}, index: number?)
 end
 
 -- Check if two tables are equal
-function tableModule.equals(target1: {[any]: any}, target2: {[any]: any}): boolean
+function tableModule.equals(target1: {[any]: any}, target2: {[any]: any}, checkBoth: boolean?): boolean
 	for key: any, value: any in pairs(target1) do
 		if target2[key] ~= value then
 			return false
+		end
+	end
+	if checkBoth then
+		for key: any, value: any in pairs(target2) do
+			if target1[key] ~= value then
+				return false
+			end
 		end
 	end
 	return true
