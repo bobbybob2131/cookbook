@@ -6,6 +6,7 @@
 --[[
 type proxyWithMeta userdata with metatable type
 type proxy userdata type
+
 function tableModule.concatenateNonStrings(array: {[number]: any}, separator: string?, startPos: number?, endPos: number?, separateEnding: boolean?): string
 	Concatenate an array with non-string values (e.g. booleans), using the same defaults/functionality as the builtin
 function tableModule.prettyConcatenate(array: {[number]: any}): string Concatenate an array with commas and the ending "x and y"
