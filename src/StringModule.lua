@@ -1,7 +1,7 @@
 --!strict
 -- Author(s): bobbybob2131
--- Last edited: 5 April 2022
--- Description: 16 functions for strings.
+-- Last edited: 6 April 2022
+-- Description: 17 functions for strings.
 
 --[[
 function stringModule.levenshteinDistance(string1: string, string2: string): number Calculate the Levenshtein distance between two strings (how different they are)
@@ -20,6 +20,7 @@ function stringModule.endsWith(target: string, start: string): boolean Check if 
 function stringModule.sanitiseRichText(target: string): string Clean rich text characters from a string, it still displays properly, but doesn't mess up RichText
 function stringModule.words(target: string): {string} Get an array of all the words in a string
 function stringModule.iterateLetters(target: string): () -> (string) Iterate over each letter in a string
+function stringModule.substitute(target: string, ...): string Substitue ${var} for provided variables, in order
 ]]
 
 local stringModule = {}
@@ -159,6 +160,15 @@ function stringModule.iterateLetters(target: string): () -> (string)
 		index += 1
 		return string.sub(target, index, index)
 	end
+end
+
+-- Substitue ${var} for provided variables, in order
+function stringModule.substitute(target: string, ...): string
+	local args: {any} = if type(...) == "table" then ... else {...}
+	for index: number, value: any in ipairs(args) do
+		target = string.gsub(target, "%$%b{}", tostring(value), 1)
+	end
+	return target
 end
 
 return stringModule
