@@ -1,6 +1,6 @@
 --!strict
 -- Author(s): bobbybob2131 
--- Last edited: 3 April 2022
+-- Last edited: 16 April 2022
 -- Description: 6 variables and 27 functions for mathematics
 
 --[[
@@ -178,7 +178,7 @@ end
 -- Find the square root of the product of all the inputs
 function mathsModule.geometricMean(...): number
 	local total: number = 0
-	local args: {number} = if type(...) == "table" then ... else {...}
+	local args: {number} = if type(...) == "table" then ... else table.pack(...)
 	for index: number, value: number in ipairs(args) do
 		total *= value
 	end
@@ -187,7 +187,7 @@ end
 
 -- Find the square root of the mean of the squared inputs (aka root mean square)
 function mathsModule.quadraticMean(...): number
-	local args: {number} = if type(...) == "table" then ... else {...}
+	local args: {number} = if type(...) == "table" then ... else table.pack(...)
 	local total: number = 0
 	for index: number, value: number in ipairs(args) do
 		total += value^2
@@ -198,7 +198,7 @@ end
 -- Find the mean of a data set (average)
 function mathsModule.mean(...): number
 	local total: number = 0
-	local args: {number} = if type(...) == "table" then ... else {...}
+	local args: {number} = if type(...) == "table" then ... else table.pack(...)
 	for index: number, value: number in ipairs(args) do
 		total += value
 	end
@@ -207,14 +207,14 @@ end
 
 -- Find the median of a data set (middle value)
 function mathsModule.median(...): number
-	local args: {number} = if type(...) == "table" then ... else {...}
+	local args: {number} = if type(...) == "table" then ... else table.pack(...)
 	table.sort(args)
 	return if #args % 2 == 0 then (args[#args / 2] + args[#args / 2 + 1]) / 2 else args[math.ceil(#args / 2)]
 end
 
 -- Find the mode(s) of a data set (most common value)
 function mathsModule.mode(...): (number | {number}, number)
-	local args: {number} = if type(...) == "table" then ... else {...}
+	local args: {number} = if type(...) == "table" then ... else table.pack(...)
 	local modePass1: {number} = {}
 	local modePass2: {number} = {}
 	local occurrences: number = 0
@@ -237,21 +237,21 @@ end
 
 -- Find the range of a data set (difference between largest and smallest)
 function mathsModule.range(...): number
-	local args: {number} = if type(...) == "table" then ... else {...}
+	local args: {number} = if type(...) == "table" then ... else table.pack(...)
 	table.sort(args)
 	return args[#args] - args[1]
 end
 
 -- Find the mid range (average of largest and smallest)
 function mathsModule.midRange(...): number
-	local args: {number} = if type(...) == "table" then ... else {...}
+	local args: {number} = if type(...) == "table" then ... else table.pack(...)
 	table.sort(args)
 	return (args[#args] - args[1]) / 2
 end
 
 -- Find the first quartile (middle of smallest and median)
 function mathsModule.lowerQuartile(...): number
-	local args: {number} = if type(...) == "table" then ... else {...}
+	local args: {number} = if type(...) == "table" then ... else table.pack(...)
 	table.sort(args)
 	
 	for Index: number = 1, ((#args - #args % 2) / 2) + (#args % 2), 1 do
@@ -263,7 +263,7 @@ end
 
 -- Find the third quartile (middle of median and largest)
 function mathsModule.upperQuartile(...): number
-	local args: {number} = if type(...) == "table" then ... else {...}
+	local args: {number} = if type(...) == "table" then ... else table.pack(...)
 	table.sort(args)
 
 	for Index: number = 1, ((#args - #args % 2) / 2) + (#args % 2), 1 do
@@ -275,14 +275,14 @@ end
 
 -- Find the interquartile range (difference between first and third quartiles)
 function mathsModule.interquartileRange(...): number
-	local args: {number} = if type(...) == "table" then ... else {...} -- Prevent work being done twice
+	local args: {number} = if type(...) == "table" then ... else table.pack(...) -- Prevent work being done twice
 	table.sort(args)
 	return mathsModule.upperQuartile(args) - mathsModule.lowerQuartile(args)
 end
 
 -- Find the standard deviation (spread from mean average)
 function mathsModule.standardDeviation(...): number
-	local args: {number} = if type(...) == "table" then ... else {...}
+	local args: {number} = if type(...) == "table" then ... else table.pack(...)
 	
 	local total: number = 0
 	for index: number, value: number in ipairs(args) do
