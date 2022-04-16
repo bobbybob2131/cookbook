@@ -1,7 +1,7 @@
 --!strict
 -- Author(s): bobbybob2131 
--- Last edited: 3 April 2022
--- Description: 2 types and 14 functions for the manipulation of tables
+-- Last edited: 16 April 2022
+-- Description: 2 types and 13 functions for the manipulation of tables
 
 --[[
 type proxy userdata
@@ -24,8 +24,6 @@ function tableModule.concatenateDictionary(dictionary: {[any]: any}, separator: 
 function tableModule.copy(target: {[any]: any}, deep: boolean?): {[any]: any}
 	Copy a table, with the option to do the same for all child tables
 function tableModule.swapRemove(array: {any}, index: number?) Quickly remove a value from an array, but without preserving order
-function tableModule.equals(target1: {[any]: any}, target2: {[any]: any}, checkBoth: boolean?): boolean 
-	Check if two tables are equal, `checkBoth` toggles looping through both tables, it checks if target1 has the same values as target2, and target2 the same as target1	
 ]]
 
 --[[
@@ -82,7 +80,7 @@ end
 
 -- Make sure a tuple (...) is a table, for iteration over
 function tableModule.normaliseTuple(...: any)
-	return if type(...) == "table" then ... else {...}
+	return if type(...) == "table" then ... else table.pack(...)
 end
 
 -- Check if a table contains a value (works recursively, and on dictionaries)
@@ -215,23 +213,6 @@ function tableModule.swapRemove(array: {any}, index: number?)
 	local length: number = #array
 	array[index or 1] = array[length] 
 	array[length] = nil
-end
-
--- Check if two tables are equal
-function tableModule.equals(target1: {[any]: any}, target2: {[any]: any}, checkBoth: boolean?): boolean
-	for key: any, value: any in pairs(target1) do
-		if target2[key] ~= value then
-			return false
-		end
-	end
-	if checkBoth then
-		for key: any, value: any in pairs(target2) do
-			if target1[key] ~= value then
-				return false
-			end
-		end
-	end
-	return true
 end
 
 return tableModule
